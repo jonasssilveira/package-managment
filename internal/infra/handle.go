@@ -21,6 +21,11 @@ func (h Handle) Post(path string, webHandle func(ctx *gin.Context)) {
 	h.Engine.POST(path, webHandle)
 }
 
+func (h Handle) Delete(path string, webHandle func(ctx *gin.Context)) {
+	h.Engine.DELETE(path, webHandle)
+}
+
+
 func (h Handle) Run() {
 	err := h.Engine.Run(":" + h.server.port)
 	if err != nil {

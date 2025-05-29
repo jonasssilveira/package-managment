@@ -13,7 +13,7 @@ type Config struct {
 
 func NewConfig() (*Config, error) {
 	config := &Config{}
-	file, err := os.Open("D:\\Projetos\\order-package\\internal\\infra\\config\\properties.yaml")
+	file, err := os.Open("./internal/infra/config/properties.yaml")
 	if err != nil {
 		return nil, err
 	}

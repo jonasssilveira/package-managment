@@ -16,10 +16,10 @@ func NewPackCombo(packRepository adapters.PackRepository) *PackCombo {
 	}
 }
 
-func (pk PackCombo) Find(ctx context.Context, packs dto.Package) dto.PackCombination {
+func (pk PackCombo) Find(ctx context.Context, packs dto.PackageAmount) dto.PackCombination {
 	packages := pk.packRepository.GetAvailablePacks(ctx)
 
-	limit := packs.Amount + packages[len(packages)]
+	limit := packs.Amount + packages[len(packages)-1]
 
 	dp := make([]*struct {
 		packCount int
@@ -36,7 +36,7 @@ func (pk PackCombo) Find(ctx context.Context, packs dto.Package) dto.PackCombina
 			if i-size >= 0 && dp[i-size] != nil {
 				newCount := dp[i-size].packCount + 1
 				if dp[i] == nil || newCount < dp[i].packCount {
-					var newCombo dto.PackCombination
+					newCombo := dto.PackCombination{Packs: make(map[int64]int64)}
 					for k, v := range dp[i-size].packCombo.Packs {
 						newCombo.Packs[k] = v
 					}
@@ -57,4 +57,12 @@ func (pk PackCombo) Find(ctx context.Context, packs dto.Package) dto.PackCombina
 	}
 
 	return dto.PackCombination{Packs: make(map[int64]int64)}
+}
+
+func (pk PackCombo) Delete(ctx context.Context, packs dto.Package) error{
+	return pk.packRepository.RemovePack(ctx, packs.ToEntity())
+}
+
+func (pk PackCombo) Add(ctx context.Context, packs dto.Package)error{
+	return pk.packRepository.AddPack(ctx, packs.ToEntity())
 }

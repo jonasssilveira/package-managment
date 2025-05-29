@@ -28,3 +28,9 @@ func (r *MongoPackRepository) GetAvailablePacks(ctx context.Context) []int64 {
 	slices.Sort(sizes)
 	return sizes
 }
+func (r *MongoPackRepository) RemovePack(ctx context.Context, packDoc entity.PackDocument)error{
+	return r.collection.Delete(ctx, packDoc)
+}
+func (r *MongoPackRepository) AddPack(ctx context.Context, packDoc entity.PackDocument)error{
+	return r.collection.Create(ctx, packDoc)
+}

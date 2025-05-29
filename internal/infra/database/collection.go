@@ -19,7 +19,7 @@ type MongoCollection struct {
 type Collection interface {
 	Find(ctx context.Context) []interface{}
 	Create(ctx context.Context, document interface{}) error
-	DeleteOne(ctx context.Context, filter interface{}) error
+	Delete(ctx context.Context, filter interface{}) error
 }
 
 const (
@@ -61,7 +61,7 @@ func (mc MongoCollection) getCollection(ctx context.Context) (*mongo.Client, *mo
 
 	return client, client.Database(mc.mongoCfg.Database).Collection(collectionName)
 }
-func (c MongoCollection) DeleteOne(ctx context.Context, filter interface{}) error {
+func (c MongoCollection) Delete(ctx context.Context, filter interface{}) error {
 	client, cll := c.getCollection(ctx)
 	defer isError(ctx, client.Disconnect)
 	if _, err := cll.DeleteOne(ctx, filter); err != nil {

@@ -30,5 +30,7 @@ type FindOptimalPacks interface {
 	//   - The algorithm uses dynamic programming and iterates from 1 to the given amount.
 	//   - It keeps track of the minimal total item count that satisfies the order, and among them, the fewest packs.
 	//   - Time complexity is approximately O(n * m), where n = amount and m = number of pack sizes.
-	Find(ctx context.Context, packs dto.Package) dto.PackCombination
+	Find(ctx context.Context, packs dto.PackageAmount) dto.PackCombination
+	Delete(ctx context.Context, packs dto.Package) error
+	Add(ctx context.Context, packs dto.Package) error
 }

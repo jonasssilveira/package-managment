@@ -23,6 +23,8 @@ func main() {
 	handler := infra.NewHandle(*server)
 
 	handler.Post("/packs-find", optimalService.Find)
+	handler.Post("/packs-create", optimalService.Create)
+	handler.Delete("/packs/:size", optimalService.Delete)
 
 	handler.Run()
 }
