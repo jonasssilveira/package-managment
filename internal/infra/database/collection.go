@@ -21,9 +21,9 @@ type Collection interface {
 	Create(ctx context.Context, document interface{}) error
 	Delete(ctx context.Context, filter interface{}) error
 }
-
+type CollectionConfig string
 const (
-	CollectionConfig = "collection"
+	CollectionName CollectionConfig = "collection"
 )
 
 func NewMongoCollection(mongoConfig config.Database) *MongoCollection {
@@ -39,7 +39,7 @@ func NewMongoCollection(mongoConfig config.Database) *MongoCollection {
 }
 
 func getMongoCollectionVar(ctx context.Context) string {
-	return ctx.Value(CollectionConfig).(string)
+	return ctx.Value(CollectionName).(string)
 }
 
 func isError(ctx context.Context, handler handleError) {

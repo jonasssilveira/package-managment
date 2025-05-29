@@ -27,7 +27,7 @@ func NewOptimalPackageService(optPackageUseCase adapters.FindOptimalPacks) Optim
 }
 
 func (s OptimalPackageService) Find(ctx *gin.Context) {
-	c := context.WithValue(ctx, database.CollectionConfig, mongo.PackCollection)
+	c := context.WithValue(ctx, database.CollectionName, mongo.PackCollection)
 	var pack dto.PackageAmount
 	err := ctx.BindJSON(&pack)
 	if err != nil {
@@ -39,7 +39,7 @@ func (s OptimalPackageService) Find(ctx *gin.Context) {
 }
 
 func (s OptimalPackageService) Delete(ctx *gin.Context) {
-	c := context.WithValue(ctx, database.CollectionConfig, mongo.PackCollection)
+	c := context.WithValue(ctx, database.CollectionName, mongo.PackCollection)
 	size, err:= strconv.ParseInt(ctx.Param("size"), 10, 64)
 	if err != nil{
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -50,7 +50,7 @@ func (s OptimalPackageService) Delete(ctx *gin.Context) {
 }
 
 func (s OptimalPackageService) Create(ctx *gin.Context) {
-	c := context.WithValue(ctx, database.CollectionConfig, mongo.PackCollection)
+	c := context.WithValue(ctx, database.CollectionName, mongo.PackCollection)
 	var pack dto.Package
 	err := ctx.BindJSON(&pack)
 	if err != nil {

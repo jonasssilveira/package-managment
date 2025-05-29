@@ -14,6 +14,11 @@ func (p Package) ToEntity()entity.PackDocument{
 	return entity.PackDocument{Size : p.Size}
 }
 
+type Pack struct {
+	Size   int64
+	Amount int64
+}
+
 type PackCombination struct {
-	Packs map[int64]int64
+	Packs []Pack
 }
