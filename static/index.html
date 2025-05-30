@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Order Packs Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        input {
+            padding: 6px;
+            margin: 4px;
+        }
+        button {
+            padding: 8px 12px;
+            margin: 6px 2px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table, td, th {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 6px 12px;
+        }
+        .pack-input-row {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Order Packs Calculator</h1>
+
+<!-- Pack sizes input section -->
+<h3>Pack Sizes</h3>
+<div id="pack-inputs">
+    <div class="pack-input-row">
+        <input type="number" class="pack-size" placeholder="Pack Size" />
+    </div>
+</div>
+<!-- Controls to Add and Remove -->
+<h3>Manage Inputs</h3>
+<button onclick="addPackInput()">+ Add Pack Input</button>
+<button onclick="submitPacks()">✔ Submit Pack Sizes</button>
+
+<!-- Order input and calculator -->
+<h3>Calculate Packs for Order</h3>
+<label>Items: <input type="number" id="items" value="263" placeholder="Enter quantity" /></label>
+<button onclick="calculatePacks()">Calculate</button>
+
+<h3>Result</h3>
+<table>
+    <thead>
+    <tr><th>Pack</th><th>Quantity</th></tr>
+    </thead>
+    <tbody id="result-body"></tbody>
+</table>
+
+<label>
+    Remove Pack Size:
+    <input type="number" id="remove-pack-size" placeholder="e.g. 75" />
+</label>
+<button onclick="removePack()">− Remove Pack</button>
+
+<script>
+    function addPackInput() {
+        const div = document.createElement('div');
+        div.className = 'pack-input-row';
+        div.innerHTML = `<input type="number" class="pack-size" placeholder="Pack Size" />`;
+        document.getElementById('pack-inputs').appendChild(div);
+    }
+
+    async function submitPacks() {
+        const sizes = Array.from(document.querySelectorAll('.pack-size'))
+            .map(input => parseInt(input.value))
+            .filter(n => !isNaN(n) && n > 0);
+
+        if (sizes.length === 0) {
+            alert('Please enter at least one valid pack size.');
+            return;
+        }
+
+        const body = {
+            packages: sizes.map(size => ({ size }))
+        };
+
+        const res = await fetch('http://localhost:8080/packs-create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+
+        if (res.ok) {
+            alert('Pack sizes submitted!');
+        } else {
+            alert('Failed to submit pack sizes.');
+        }
+    }
+
+    async function calculatePacks() {
+        const amount = parseInt(document.getElementById('items').value);
+        if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid item quantity.');
+            return;
+        }
+
+        const body = { amount };
+        console.log(body)
+        const res = await fetch('http://localhost:8080/packs-find', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+
+        const result = await res.json();
+        const tbody = document.getElementById('result-body');
+        tbody.innerHTML = '';
+
+        if (result.packs?.length > 0) {
+            result.packs.forEach(pack => {
+                const row = `<tr><td>${pack.size}</td><td>${pack.amount}</td></tr>`;
+                tbody.innerHTML += row;
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="2">No result</td></tr>';
+        }
+    }
+
+    async function removePack() {
+        const sizeInput = document.getElementById('remove-pack-size');
+        const size = parseInt(sizeInput.value);
+
+        if (isNaN(size) || size <= 0) {
+            alert('Please enter a valid pack size to remove.');
+            return;
+        }
+
+        const res = await fetch(`http://localhost:8080/packs/${size}`, {
+            method: 'DELETE'
+        });
+
+        if (res.ok) {
+            alert(`Pack size ${size} removed.`);
+            sizeInput.value = '';
+        } else {
+            alert(`Failed to remove pack size ${size}.`);
+        }
+    }
+</script>
+
+</body>
+</html>

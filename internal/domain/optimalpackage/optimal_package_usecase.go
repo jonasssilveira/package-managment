@@ -10,7 +10,7 @@ type PackCombo struct {
 	packRepository adapters.PackRepository
 }
 
-func NewPackCombo(packRepository adapters.PackRepository) *PackCombo {
+func NewPackageUseCase(packRepository adapters.PackRepository) *PackCombo {
 	return &PackCombo{
 		packRepository: packRepository,
 	}
@@ -86,10 +86,10 @@ func deepCopyPacks(src []dto.Pack) []dto.Pack {
 	copy(copied, src)
 	return copied
 }
-func (pk PackCombo) Delete(ctx context.Context, packs dto.Package) error{
-	return pk.packRepository.RemovePack(ctx, packs.ToEntity())
+func (pk PackCombo) Delete(ctx context.Context, packs dto.Package) {
+	pk.packRepository.RemovePack(ctx, packs.ToEntity())
 }
 
-func (pk PackCombo) Add(ctx context.Context, packs dto.Package)error{
-	return pk.packRepository.AddPack(ctx, packs.ToEntity())
+func (pk PackCombo) Add(ctx context.Context, packs dto.Packages) {
+	pk.packRepository.AddPacks(ctx, packs.ToEntity())
 }

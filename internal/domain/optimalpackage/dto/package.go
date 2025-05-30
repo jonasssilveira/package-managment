@@ -6,19 +6,31 @@ type PackageAmount struct {
 	Amount int64 `json:"amount"`
 }
 
-type Package struct{
+type Package struct {
 	Size int64 `json:"size"`
 }
 
-func (p Package) ToEntity()entity.PackDocument{
-	return entity.PackDocument{Size : p.Size}
+type Packages struct {
+	Packages []Package `json:"packages"`
+}
+
+func (p Package) ToEntity() entity.PackDocument {
+	return entity.PackDocument{Size: p.Size}
+}
+
+func (p Packages) ToEntity() []entity.PackDocument {
+	var packages []entity.PackDocument
+	for i := 0; i < len(p.Packages); i++ {
+		packages = append(packages, p.Packages[i].ToEntity())
+	}
+	return packages
 }
 
 type Pack struct {
-	Size   int64
-	Amount int64
+	Size   int64 `json:"size"`
+	Amount int64 `json:"amount"`
 }
 
 type PackCombination struct {
-	Packs []Pack
+	Packs []Pack `json:"packs"`
 }

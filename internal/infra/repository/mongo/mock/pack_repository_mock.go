@@ -1,4 +1,3 @@
-
 package mock
 
 import (
@@ -8,16 +7,16 @@ import (
 
 type MockPackRepository struct {
 	GetAvailableMock func(ctx context.Context) []int64
-	AddPackMock    func(ctx context.Context, pack entity.PackDocument) error
-	RemovePackMock func(ctx context.Context, pack entity.PackDocument) error
+	AddPacksMock     func(ctx context.Context, packs []entity.PackDocument)
+	RemovePackMock   func(ctx context.Context, packDoc entity.PackDocument)
 }
 
-func (m *MockPackRepository) AddPack(ctx context.Context, packDoc entity.PackDocument) error {
-	return m.AddPackMock(ctx, packDoc)
+func (m *MockPackRepository) AddPacks(ctx context.Context, packsDoc []entity.PackDocument) {
+	m.AddPacksMock(ctx, packsDoc)
 }
 
-func (m *MockPackRepository) RemovePack(ctx context.Context, packDoc entity.PackDocument) error {
-	return m.RemovePackMock(ctx, packDoc)
+func (m *MockPackRepository) RemovePack(ctx context.Context, packsDoc entity.PackDocument) {
+	m.RemovePackMock(ctx, packsDoc)
 }
 
 func (m *MockPackRepository) GetAvailablePacks(ctx context.Context) []int64 {

@@ -16,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
+
 func TestOptimalPackageService_Find(t *testing.T) {
 	tests := []struct {
 		name           string
@@ -25,18 +26,18 @@ func TestOptimalPackageService_Find(t *testing.T) {
 		expectedResult dto.PackCombination
 	}{
 		{
-			name:          "Exact match with available packs",
-			mockAvailable: []int64{250, 500, 1000},
-			requestBody:   dto.PackageAmount{Amount: 250},
+			name:           "Exact match with available packs",
+			mockAvailable:  []int64{250, 500, 1000},
+			requestBody:    dto.PackageAmount{Amount: 250},
 			expectedStatus: http.StatusOK,
-			expectedResult:  dto.PackCombination{Packs: []dto.Pack{{Size:250, Amount: 1}}},
+			expectedResult: dto.PackCombination{Packs: []dto.Pack{{Size: 250, Amount: 1}}},
 		},
 		{
-			name:          "Best fit with combination",
-			mockAvailable: []int64{250, 500, 1000},
-			requestBody:   dto.PackageAmount{Amount: 750},
+			name:           "Best fit with combination",
+			mockAvailable:  []int64{250, 500, 1000},
+			requestBody:    dto.PackageAmount{Amount: 750},
 			expectedStatus: http.StatusOK,
-			expectedResult: dto.PackCombination{Packs: []dto.Pack{{Size: 500, Amount: 1}, {Size:250, Amount: 1}}},
+			expectedResult: dto.PackCombination{Packs: []dto.Pack{{Size: 500, Amount: 1}, {Size: 250, Amount: 1}}},
 		},
 		{
 			name:           "Empty input body",
@@ -57,7 +58,7 @@ func TestOptimalPackageService_Find(t *testing.T) {
 			}
 
 			// Setup use case and service
-			useCase := NewPackCombo(mockRepo)
+			useCase := NewPackageUseCase(mockRepo)
 			service := NewOptimalPackageService(useCase)
 
 			// Setup Gin router
@@ -108,12 +109,12 @@ func TestOptimalPackageService_Create(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := &mock.MockPackRepository{
-				AddPackMock: func(ctx context.Context, pack entity.PackDocument) error {
-					return tt.mockErr
+				AddPacksMock: func(ctx context.Context, pack []entity.PackDocument) {
+
 				},
 			}
 
-			useCase := NewPackCombo(mockRepo)
+			useCase := NewPackageUseCase(mockRepo)
 			service := NewOptimalPackageService(useCase)
 
 			router := gin.Default()
@@ -161,15 +162,11 @@ func TestOptimalPackageService_Delete(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := &mock.MockPackRepository{
-				RemovePackMock: func(ctx context.Context, pack entity.PackDocument) error {
-					if tt.param < 0 {
-						return nil
-					}
-					return tt.mockErr
+				RemovePackMock: func(ctx context.Context, pack entity.PackDocument) {
 				},
 			}
 
-			useCase := NewPackCombo(mockRepo)
+			useCase := NewPackageUseCase(mockRepo)
 			service := NewOptimalPackageService(useCase)
 
 			router := gin.Default()

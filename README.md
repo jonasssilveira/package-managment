@@ -1,125 +1,115 @@
-# 🧠 Optimal Package Service
+# 🧮 Order Pack Calculator
 
-This service receives an order quantity and calculates the optimal combination of available pack sizes to fulfill that order with minimal waste and/or fewer packs. It also supports CRUD operations on available pack sizes using a MongoDB database.
-
----
-
-## 📦 Features
-
-- ✅ Calculate optimal pack distribution (`/packs-find`)
-- ✅ Add a new pack size (`/packs-create`)
-- ✅ Remove a pack size (`/packs/:size`)
+This project provides a backend service written in Go that calculates optimal packaging combinations based on available pack sizes. It also comes with a simple HTML frontend interface for testing.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Features
 
-### Prerequisites
-
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
+- Create, retrieve, and delete pack sizes
+- Calculate the optimal number of packs for a given quantity
+- REST API with JSON payloads
+- In-memory data storage for easy deployment
+- HTML frontend for interactive testing
 
 ---
 
-## 🐳 Running with Docker
+## 📦 Endpoints
+
+| Method | Endpoint         | Description                      |
+|--------|------------------|----------------------------------|
+| POST   | `/packs-create`  | Create multiple pack sizes       |
+| POST   | `/packs-find`    | Calculate optimal pack combo     |
+| DELETE | `/packs/:size`   | Delete a pack by its size        |
+
+---
+
+## 🌐 Frontend
+
+Open `index.html` in your browser to test the backend interactively.
+
+---
+
+## 🛠️ Requirements
+
+- Go 1.20+
+- Make
+- Docker (optional for containerization)
+
+---
+
+## 🧪 Running Locally
+
+### 🔹 Clone the Repository
 
 ```bash
-docker-compose up --build
+git clone https://github.com/your-repo/order-pack-calculator.git
+cd order-pack-calculator
 ```
 
-This will start:
-- The Go application (exposed at `http://localhost:8080`)
-- A MongoDB instance with initial seed data
-
----
-
-## 🧪 Endpoints
-
-### 1. **Find Optimal Packs**
-
-```http
-POST /packs-find
-```
-
-**Request Body:**
-
-```json
-{
-  "amount": 1200
-}
-```
-
-**Response:**
-
-```json
-{
-  "250": 1,
-  "1000": 1
-}
-```
-
----
-
-### 2. **Add a New Pack**
-
-```http
-POST /packs-create
-```
-
-**Request Body:**
-
-```json
-{
-  "size": 750
-}
-```
-
-**Response:** `201 Created` on success
-
----
-
-### 3. **Delete a Pack by Size**
-
-```http
-DELETE /packs/:size
-```
-
-**Example:**
-
-```http
-DELETE /packs/750
-```
-
-**Response:** `200 OK` on success
-
----
-
-## 📁 Project Structure
-
-```
-├── internal
-│   ├── domain          # Core business logic
-│   ├── infra           # Infra layer (MongoDB, server, etc.)
-│   └── script          # Docker + Mongo seed
-├── main.go             # App entrypoint
-├── go.mod / go.sum
-```
-
----
-
-## 🧪 Running Tests
+### 🔹 Run the App
 
 ```bash
-go test ./...
+make run
 ```
 
-Unit tests include:
-- Optimal pack calculation
-- Pack creation and deletion logic
-- Repository mocking
+The server will start at [http://localhost:8080](http://localhost:8080)
+
+### 🔹 Run Tests
+
+```bash
+make test
+```
+
+### 🔹 Run Tests with Coverage
+
+```bash
+make coverage
+```
+
+### 🔹 Clean Up
+
+```bash
+make clean
+```
 
 ---
 
-## 📄 License
+## 🐳 Docker
 
-MIT License. Feel free to use and modify.
+Build and run using Docker:
+
+```bash
+docker build -t order-pack .
+docker run -p 8080:8080 order-pack
+```
+
+---
+
+## 📂 Project Structure
+
+```
+├── internal/
+│   └── domain/
+│       └── optimalpackage/
+│           ├── adapters/
+│           ├── dto/
+│           ├── entity/
+│           ├── mock/
+│           ├── *.go
+│   └── infra/
+│       ├── config/
+│       ├── repository/
+│       ├── *.go
+├── script/
+│   └── docker-compose.yaml
+├── Makefile
+├── main.go
+├── README.md
+```
+
+---
+
+## 👨‍💻 Author
+
+Made with 💚 by [Your Name or Organization]

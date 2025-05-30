@@ -1,97 +1,50 @@
 package database
 
 import (
-	"context"
-	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"order-package/internal/infra/config"
+	"order-package/internal/domain/optimalpackage/entity"
+	"sync"
 )
-
-type handleError func(ctx context.Context) error
-
-type MongoCollection struct {
-	opts     *options.ClientOptions
-	mongoCfg config.Mongo
-}
 
 type Collection interface {
-	Find(ctx context.Context) []interface{}
-	Create(ctx context.Context, document interface{}) error
-	Delete(ctx context.Context, filter interface{}) error
+	Find() []*entity.PackDocument
+	CreateMany(docs []entity.PackDocument)
+	Delete(size int64)
 }
-type CollectionConfig string
-const (
-	CollectionName CollectionConfig = "collection"
-)
 
-func NewMongoCollection(mongoConfig config.Database) *MongoCollection {
-	mongoURI := fmt.Sprintf("mongodb://%s:%s@%s:%s/?authSource=admin",
-		mongoConfig.Mongo.Username,
-		mongoConfig.Mongo.Password,
-		mongoConfig.Mongo.Host,
-		mongoConfig.Mongo.Port)
-	return &MongoCollection{
-		opts:     options.Client().ApplyURI(mongoURI),
-		mongoCfg: mongoConfig.Mongo,
+type InMemoryPackRepository struct {
+	store map[int64]int64
+	mu    sync.RWMutex
+}
+
+func NewInMemoryPackRepository() *InMemoryPackRepository {
+	return &InMemoryPackRepository{
+		store: map[int64]int64{23: 23, 31: 31, 53: 53},
 	}
 }
 
-func getMongoCollectionVar(ctx context.Context) string {
-	return ctx.Value(CollectionName).(string)
+func (r *InMemoryPackRepository) Find() []*entity.PackDocument {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	var packs []*entity.PackDocument
+	for size := range r.store {
+		packs = append(packs, &entity.PackDocument{Size: size})
+	}
+	return packs
 }
 
-func isError(ctx context.Context, handler handleError) {
-	func(ctx context.Context) {
-		err := handler(ctx)
-		if err != nil {
-			panic(err)
-		}
-	}(ctx)
+func (r *InMemoryPackRepository) CreateMany(docs []entity.PackDocument) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	for _, doc := range docs {
+		r.store[doc.Size] = doc.Size
+	}
 }
 
-func (mc MongoCollection) getCollection(ctx context.Context) (*mongo.Client, *mongo.Collection) {
-	client, err := mongo.Connect(ctx, mc.opts)
-	if err != nil {
-		fmt.Printf("Error %s connecting to database ", err.Error())
-		panic(err)
-	}
-	collectionName := getMongoCollectionVar(ctx)
+func (r *InMemoryPackRepository) Delete(size int64) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 
-	return client, client.Database(mc.mongoCfg.Database).Collection(collectionName)
-}
-func (c MongoCollection) Delete(ctx context.Context, filter interface{}) error {
-	client, cll := c.getCollection(ctx)
-	defer isError(ctx, client.Disconnect)
-	if _, err := cll.DeleteOne(ctx, filter); err != nil {
-		return err
-	}
-	return nil
-}
-func (c MongoCollection) Create(ctx context.Context, document interface{}) error {
-	client, cll := c.getCollection(ctx)
-	defer isError(ctx, client.Disconnect)
-	if _, err := cll.InsertOne(ctx, document); err != nil {
-		return err
-	}
-	return nil
-}
-func (c MongoCollection) Find(ctx context.Context) []interface{} {
-	client, cll := c.getCollection(ctx)
-	defer isError(ctx, client.Disconnect)
-	cursor, err := cll.Find(ctx, bson.M{})
-	if err != nil {
-		panic(err)
-	}
-	defer isError(ctx, cursor.Close)
-	var packages []interface{}
-	for cursor.Next(ctx) {
-		var doc interface{}
-		if err := cursor.Decode(&doc); err != nil {
-			panic(err)
-		}
-		packages = append(packages, doc)
-	}
-	return packages
+	delete(r.store, size)
 }

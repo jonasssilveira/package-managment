@@ -7,6 +7,6 @@ import (
 
 type PackRepository interface {
 	GetAvailablePacks(ctx context.Context) []int64
-	RemovePack(ctx context.Context, packDoc entity.PackDocument) error
-	AddPack(ctx context.Context, document entity.PackDocument) error
-} 
+	RemovePack(ctx context.Context, packDoc entity.PackDocument)
+	AddPacks(ctx context.Context, document []entity.PackDocument)
+}

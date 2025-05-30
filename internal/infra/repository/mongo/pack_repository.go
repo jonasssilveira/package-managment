@@ -20,17 +20,17 @@ func NewMongoPackRepository(collection database.Collection) *MongoPackRepository
 }
 
 func (r *MongoPackRepository) GetAvailablePacks(ctx context.Context) []int64 {
-	packages := r.collection.Find(ctx)
+	packages := r.collection.Find()
 	var sizes []int64
-	for i := 0; i < len(packages); i++ {
-		sizes = append(sizes, packages[i].(*entity.PackDocument).Size)
+	for _, pack := range packages {
+		sizes = append(sizes, pack.Size)
 	}
 	slices.Sort(sizes)
 	return sizes
 }
-func (r *MongoPackRepository) RemovePack(ctx context.Context, packDoc entity.PackDocument)error{
-	return r.collection.Delete(ctx, packDoc)
+func (r *MongoPackRepository) RemovePack(ctx context.Context, packDoc entity.PackDocument) {
+	r.collection.Delete(packDoc.Size)
 }
-func (r *MongoPackRepository) AddPack(ctx context.Context, packDoc entity.PackDocument)error{
-	return r.collection.Create(ctx, packDoc)
+func (r *MongoPackRepository) AddPacks(ctx context.Context, packDoc []entity.PackDocument) {
+	r.collection.CreateMany(packDoc)
 }

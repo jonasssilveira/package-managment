@@ -25,6 +25,9 @@ func (h Handle) Delete(path string, webHandle func(ctx *gin.Context)) {
 	h.Engine.DELETE(path, webHandle)
 }
 
+func (h Handle) Static(path string, root string) {
+	h.Engine.Static(path, root)
+}
 
 func (h Handle) Run() {
 	err := h.Engine.Run(":" + h.server.port)
