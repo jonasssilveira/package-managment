@@ -43,7 +43,7 @@ Open `index.html` in your browser to test the backend interactively.
 ### 🔹 Clone the Repository
 
 ```bash
-git clone https://github.com/your-repo/order-pack-calculator.git
+git clone  https://github.com/jonasssilveira/package-managment.git
 cd order-pack-calculator
 ```
 
@@ -112,4 +112,4 @@ docker run -p 8080:8080 order-pack
 
 ## 👨‍💻 Author
 
-Made with 💚 by [Your Name or Organization]
+Made with 💚 by Jonas Silveira
