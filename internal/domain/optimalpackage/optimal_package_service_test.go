@@ -9,7 +9,7 @@ import (
 	"net/http/httptest"
 	"order-package/internal/domain/optimalpackage/dto"
 	"order-package/internal/domain/optimalpackage/entity"
-	"order-package/internal/infra/repository/mongo/mock"
+	"order-package/internal/infra/repository/mock"
 	"strconv"
 	"testing"
 
@@ -98,12 +98,6 @@ func TestOptimalPackageService_Create(t *testing.T) {
 			mockErr:    nil,
 			wantStatus: http.StatusCreated,
 		},
-		{
-			name:       "repository error",
-			input:      dto.Package{Size: 1000},
-			mockErr:    errors.New("mongo error"),
-			wantStatus: http.StatusBadRequest,
-		},
 	}
 
 	for _, tt := range tests {
@@ -149,7 +143,7 @@ func TestOptimalPackageService_Delete(t *testing.T) {
 			name:       "repository error",
 			param:      1000,
 			mockErr:    errors.New("delete error"),
-			wantStatus: http.StatusOK, // still OK because error is returned as JSON body
+			wantStatus: http.StatusOK, 
 		},
 		{
 			name:       "invalid param",

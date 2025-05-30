@@ -80,8 +80,7 @@ make clean
 Build and run using Docker:
 
 ```bash
-docker build -t order-pack .
-docker run -p 8080:8080 order-pack
+make docker-up
 ```
 
 ---

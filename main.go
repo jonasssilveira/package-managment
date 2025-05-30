@@ -4,13 +4,13 @@ import (
 	"order-package/internal/domain/optimalpackage"
 	"order-package/internal/infra"
 	"order-package/internal/infra/database"
-	"order-package/internal/infra/repository/mongo"
+	"order-package/internal/infra/repository"
 )
 
 func main() {
 	server := infra.NewServer()
 	collection := database.NewInMemoryPackRepository()
-	repository := mongo.NewMongoPackRepository(collection)
+	repository := repository.NewMongoPackRepository(collection)
 	optimalUseCase := optimalpackage.NewPackageUseCase(repository)
 	optimalService := optimalpackage.NewOptimalPackageService(optimalUseCase)
 
