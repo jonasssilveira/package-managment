@@ -91,7 +91,7 @@
             packages: sizes.map(size => ({ size }))
         };
 
-        const res = await fetch('http://localhost:8080/packs-create', {
+        const res = await fetch('http://localhost:10000/packs-create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
@@ -113,7 +113,7 @@
 
         const body = { amount };
         console.log(body)
-        const res = await fetch('http://localhost:8080/packs-find', {
+        const res = await fetch('http://localhost:10000/packs-find', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
@@ -142,7 +142,7 @@
             return;
         }
 
-        const res = await fetch(`http://localhost:8080/packs/${size}`, {
+        const res = await fetch(`http://localhost:10000/packs/${size}`, {
             method: 'DELETE'
         });
 
